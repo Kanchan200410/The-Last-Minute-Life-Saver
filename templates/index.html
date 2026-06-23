@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2>🚀 Last Minute Life Saver</h2>
+
+    <div>
+        <a href="/">Dashboard</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/add-task">Add Task</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>📋 My Tasks</h1>
+
+        <a href="/add-task">
+            <button>Add Task</button>
+        </a>
+
+    </div>
+
+    {% if tasks %}
+
+        {% for task in tasks %}
+
+        <div class="task-card">
+
+            <h3>{{ task.title }}</h3>
+
+            <p>{{ task.description }}</p>
+
+            <p>
+                Deadline:
+                {{ task.deadline }}
+            </p>
+
+            <p>
+                Status:
+                {{ task.status }}
+            </p>
+
+            <div>
+
+                <a href="/complete-task/{{ task.id }}">
+                    <button>
+                        Complete
+                    </button>
+                </a>
+
+                <a href="/delete-task/{{ task.id }}">
+                    <button>
+                        Delete
+                    </button>
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="task-card">
+            <h3>No Tasks Found</h3>
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

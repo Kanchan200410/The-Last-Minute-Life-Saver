@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2>🚀 Last Minute Life Saver</h2>
+
+    <div>
+        <a href="/">Dashboard</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/add-task">Add Task</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h1>Welcome Back 👋</h1>
+
+    <div class="stats">
+
+        <div class="card">
+            <h3>Total Tasks</h3>
+            <h1>{{ total_tasks }}</h1>
+        </div>
+
+        <div class="card">
+            <h3>Completed</h3>
+            <h1>{{ completed }}</h1>
+        </div>
+
+        <div class="card">
+            <h3>Pending</h3>
+            <h1>{{ pending }}</h1>
+        </div>
+
+        <div class="card">
+            <h3>Productivity</h3>
+            <h1>{{ productivity_score }}%</h1>
+        </div>
+
+    </div>
+
+    <div class="recommendation">
+        <h2>🤖 AI Recommendation</h2>
+
+        <p>
+            Focus on your nearest deadline first.
+        </p>
+    </div>
+
+    <div class="quick-links">
+
+        <a href="/tasks">
+            <button>View Tasks</button>
+        </a>
+
+        <a href="/add-task">
+            <button>Add New Task</button>
+        </a>
+
+    </div>
+
+    <div class="rescue-box">
+
+        <h2>🚨 Rescue Mode</h2>
+
+        <p>
+            Falling behind? Let AI create a recovery plan.
+        </p>
+
+        <button>
+            Rescue Me
+        </button>
+
+    </div>
+
+</div>
+
+</body>
+</html>
