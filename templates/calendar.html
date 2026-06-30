@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Calendar — AI Productivity</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- ── Top Bar ── -->
+    <header class="topbar">
+        <a class="topbar-logo" href="#">
+            <span class="logo-icon">📅</span>
+            Calendra
+        </a>
+
+        <div class="topbar-search">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search events, tasks, deadlines…" id="search-input">
+        </div>
+
+        <div class="topbar-actions">
+            <button class="btn-icon" title="Notifications" id="notif-btn">🔔</button>
+            <button class="btn-icon" title="Settings">⚙️</button>
+            <div class="avatar" title="Alex Johnson">AJ</div>
+        </div>
+    </header>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+
+    <div class="sidebar-logo">
+        <span class="logo-icon">🚀</span>
+        <div class="logo-text">Last Minute <span>Life Saver</span></div>
+    </div>
+
+    <div class="sidebar-section-label">WORKSPACE</div>
+
+    <a href="/" class="nav-item">
+        <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="{{ url_for('tasks') }}" class="nav-item">
+        <span class="nav-icon">✅</span> Tasks
+        <span class="nav-badge">{{ pending }}</span>
+    </a>
+    <a href="#" class="nav-item">
+        <span class="nav-icon">🎯</span> Goals
+    </a>
+    <a href="#" class="nav-item">
+        <span class="nav-icon">🔥</span> Habits
+    </a>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">TOOLS</div>
+
+    <a href="/add-task" class="nav-item">
+        <span class="nav-icon">➕</span> Add Task
+    </a>
+    <a href="{{ url_for('calendar') }}" class="nav-item active">
+        <span class="nav-icon">📆</span> Calendar
+    </a>
+    <a href="{{ url_for('progress') }}" class="nav-item">
+        <span class="nav-icon">📈</span> Progress
+    </a>
+    <a href="/generate-plan" class="nav-item">
+        <span class="nav-icon">⚡</span> AI Planner
+    </a>
+
+    <div class="sidebar-bottom">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🤖</span> AI Assistant
+        </a>
+    </div>
+
+</aside>
+
+    <!-- ── Main Content ── -->
+    <main class="main-content">
+
+        <!-- Calendar Panel -->
+        <div class="calendar-panel">
+
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">My Calendar</div>
+                    <div class="panel-subtitle" id="current-date-label">Loading…</div>
+                </div>
+                <div class="header-controls">
+                    <button class="btn btn-ghost" id="today-btn">Today</button>
+                    <button class="btn btn-primary" id="add-event-btn">＋ Add Event</button>
+                </div>
+            </div>
+
+            <!-- Stats bar -->
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-label">This Week</div>
+                    <div class="stat-value" id="stat-week">0</div>
+                    <div class="stat-sub">events scheduled</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Overdue</div>
+                    <div class="stat-value" id="stat-overdue" style="color:#ef4444">0</div>
+                    <div class="stat-sub">need attention</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="stat-done" style="color:#22c55e">0</div>
+                    <div class="stat-sub">this month</div>
+                </div>
+            </div>
+
+            <div id="calendar"></div>
+
+        </div>
+
+        <!-- Right Panel -->
+        <aside class="right-panel">
+            <div class="right-panel-header">
+                <div>
+                    <div class="right-panel-title" id="rp-title">Today's Events</div>
+                    <div class="right-panel-date" id="rp-date">Select a date</div>
+                </div>
+                <button class="btn-icon" title="Filter events">⋮</button>
+            </div>
+
+            <div class="right-panel-body" id="event-list">
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <p>Click any date on the calendar to view or add events.</p>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+</div>
+
+<!-- ── Add Event Modal ── -->
+<div class="modal-overlay" id="modal-overlay">
+    <div class="modal" role="dialog" aria-labelledby="modal-title-text" aria-modal="true">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modal-title-text">New Event</h2>
+            <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="event-title">Title</label>
+            <input class="form-control" id="event-title" type="text" placeholder="e.g. Team standup, Project deadline…">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-date">Date</label>
+                <input class="form-control" id="event-date" type="date">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="event-time">Time</label>
+                <input class="form-control" id="event-time" type="time">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="event-desc">Description</label>
+            <input class="form-control" id="event-desc" type="text" placeholder="Optional notes…">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Priority</label>
+            <div class="priority-selector">
+                <input type="radio" name="priority" id="priority-high"   value="high"   class="priority-option">
+                <label for="priority-high">🔴 High</label>
+
+                <input type="radio" name="priority" id="priority-medium" value="medium" class="priority-option" checked>
+                <label for="priority-medium">🟣 Medium</label>
+
+                <input type="radio" name="priority" id="priority-low"    value="low"    class="priority-option">
+                <label for="priority-low">🟢 Low</label>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+            <button class="btn btn-primary" id="modal-save">Save Event</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+
+<script>
+/* ─── Inline bootstrap — replaces calendar.js for standalone preview ─── */
+(function () {
+
+    /* Storage helpers */
+    const STORAGE_KEY = 'calendra_events';
+
+    function loadEvents() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch { return []; }
+    }
+
+    function saveEvents(events) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+    }
+
+    /* Seed default events on first load */
+    const today = new Date();
+    const fmt = (d) => d.toISOString().split('T')[0];
+
+    function addDays(d, n) {
+        const r = new Date(d); r.setDate(r.getDate() + n); return r;
+    }
+
+    let events = loadEvents();
+
+    if (!events.length) {
+        events = [
+            { id: '1', title: 'Product Review Meeting',    date: fmt(today),          time: '10:00', priority: 'high',   desc: 'Q3 roadmap sync with stakeholders' },
+            { id: '2', title: 'Submit Quarterly Report',   date: fmt(addDays(today,1)),time: '17:00', priority: 'high',   desc: 'Finance report due end of business' },
+            { id: '3', title: 'Team Lunch',                date: fmt(addDays(today,1)),time: '12:30', priority: 'low',    desc: 'Celebrate sprint completion' },
+            { id: '4', title: 'UX Design Review',          date: fmt(addDays(today,2)),time: '14:00', priority: 'medium', desc: 'Iterate on new onboarding flow' },
+            { id: '5', title: 'Client Demo — Acme Corp',   date: fmt(addDays(today,3)),time: '09:00', priority: 'high',   desc: 'Live demo of v2.4 dashboard features' },
+            { id: '6', title: 'Sprint Planning',           date: fmt(addDays(today,5)),time: '11:00', priority: 'medium', desc: 'Backlog grooming & story-point estimates' },
+            { id: '7', title: 'Performance Reviews Due',   date: fmt(addDays(today,7)),time: '18:00', priority: 'high',   desc: 'Submit via HR portal' },
+        ];
+        saveEvents(events);
+    }
+
+    /* Utility */
+    function priorityColor(p) {
+        return { high: '#ef4444', medium: '#6366f1', low: '#22c55e' }[p] || '#6366f1';
+    }
+
+    function formatDate(str) {
+        return new Date(str + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    }
+
+    function formatTime(t) {
+        if (!t) return '';
+        const [h, m] = t.split(':');
+        const ampm = +h >= 12 ? 'PM' : 'AM';
+        return `${+h % 12 || 12}:${m} ${ampm}`;
+    }
+
+    /* Stats */
+    function updateStats() {
+        const now = new Date();
+        const weekEnd = addDays(now, 7);
+        const weekEvents = events.filter(e => {
+            const d = new Date(e.date + 'T00:00:00');
+            return d >= now && d <= weekEnd;
+        });
+        document.getElementById('stat-week').textContent = weekEvents.length;
+        document.getElementById('stat-overdue').textContent =
+            events.filter(e => new Date(e.date + 'T00:00:00') < now).length;
+        document.getElementById('stat-done').textContent =
+            Math.floor(events.length * 0.4); // demo value
+        document.getElementById('task-count-badge').textContent =
+            events.filter(e => e.priority === 'high').length;
+    }
+
+    /* AI insight */
+    function getInsight(dayEvents) {
+        const highs = dayEvents.filter(e => e.priority === 'high').length;
+        if (!dayEvents.length) return "No events this day — perfect for deep work or getting ahead on upcoming tasks.";
+        if (highs >= 2) return `You have ${highs} high-priority events today. Consider blocking prep time before each and decluttering lower-priority tasks.`;
+        if (dayEvents.length >= 3) return "Busy day ahead! Tackle the highest-priority item first thing to keep momentum going.";
+        return "Manageable schedule — you may have capacity to advance a goal or habit today.";
+    }
+
+    /* Render right panel */
+    function renderRightPanel(dateStr) {
+        const dayEvents = events.filter(e => e.date === dateStr);
+        const rpDate = document.getElementById('rp-date');
+        const rpTitle = document.getElementById('rp-title');
+        const list = document.getElementById('event-list');
+
+        rpTitle.textContent = dateStr === fmt(today) ? "Today's Events" : "Events";
+        rpDate.textContent = formatDate(dateStr);
+
+        if (!dayEvents.length) {
+            list.innerHTML = `
+                <div class="ai-insight">
+                    <div class="ai-insight-header"><span class="ai-dot"></span> AI Insight</div>
+                    <div class="ai-insight-text">${getInsight([])}</div>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">🗓️</div>
+                    <p>No events on this date.<br>Click <strong>+ Add Event</strong> to schedule something.</p>
+                </div>`;
+            return;
+        }
+
+        const sorted = [...dayEvents].sort((a,b) => {
+            const order = { high:0, medium:1, low:2 };
+            return (order[a.priority]??1) - (order[b.priority]??1);
+        });
+
+        const cards = sorted.map(ev => `
+            <div class="event-card ${ev.priority}" data-id="${ev.id}">
+                <div class="event-card-header">
+                    <div class="event-card-title">${ev.title}</div>
+                    <span class="priority-badge ${ev.priority}">${ev.priority}</span>
+                </div>
+                <div class="event-card-meta">
+                    ${ev.time ? `<span>🕐 ${formatTime(ev.time)}</span>` : ''}
+                </div>
+                ${ev.desc ? `<div class="event-card-desc">${ev.desc}</div>` : ''}
+            </div>`).join('');
+
+        list.innerHTML = `
+            <div class="ai-insight">
+                <div class="ai-insight-header"><span class="ai-dot"></span> AI Insight</div>
+                <div class="ai-insight-text">${getInsight(dayEvents)}</div>
+            </div>
+            ${cards}`;
+    }
+
+    /* Calendar init */
+    const calendarEl = document.getElementById('calendar');
+    let selectedDate = fmt(today);
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        height: 'auto',
+        events: [],
+        eventClassNames: (info) => [`priority-${info.event.extendedProps.priority}`],
+        dateClick: (info) => {
+            selectedDate = info.dateStr;
+            renderRightPanel(info.dateStr);
+            document.querySelectorAll('.fc-daygrid-day').forEach(el => el.classList.remove('fc-day-selected'));
+            info.dayEl?.classList.add('fc-day-selected');
+        },
+        eventClick: (info) => {
+            selectedDate = info.event.startStr.split('T')[0];
+            renderRightPanel(selectedDate);
+        }
+    });
+
+    calendar.render();
+
+    function syncCalendarEvents() {
+        calendar.removeAllEvents();
+        events.forEach(ev => {
+            calendar.addEvent({
+                id: ev.id,
+                title: ev.title,
+                start: ev.time ? `${ev.date}T${ev.time}` : ev.date,
+                allDay: !ev.time,
+                extendedProps: { priority: ev.priority, desc: ev.desc }
+            });
+        });
+        updateStats();
+        renderRightPanel(selectedDate);
+    }
+
+    syncCalendarEvents();
+
+    /* Today button */
+    document.getElementById('today-btn').addEventListener('click', () => {
+        calendar.today();
+        selectedDate = fmt(today);
+        renderRightPanel(selectedDate);
+    });
+
+    /* Date label */
+    const subtitleEl = document.getElementById('current-date-label');
+    subtitleEl.textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+    /* Modal */
+    const overlay    = document.getElementById('modal-overlay');
+    const addBtn     = document.getElementById('add-event-btn');
+    const closeBtn   = document.getElementById('modal-close');
+    const cancelBtn  = document.getElementById('modal-cancel');
+    const saveBtn    = document.getElementById('modal-save');
+
+    function openModal(dateStr) {
+        document.getElementById('event-date').value = dateStr || fmt(today);
+        document.getElementById('event-title').value = '';
+        document.getElementById('event-time').value = '';
+        document.getElementById('event-desc').value = '';
+        document.querySelector('input[name="priority"][value="medium"]').checked = true;
+        overlay.classList.add('open');
+        document.getElementById('event-title').focus();
+    }
+
+    function closeModal() { overlay.classList.remove('open'); }
+
+    addBtn.addEventListener('click', () => openModal(selectedDate));
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    saveBtn.addEventListener('click', () => {
+        const title    = document.getElementById('event-title').value.trim();
+        const date     = document.getElementById('event-date').value;
+        const time     = document.getElementById('event-time').value;
+        const desc     = document.getElementById('event-desc').value.trim();
+        const priority = document.querySelector('input[name="priority"]:checked')?.value || 'medium';
+
+        if (!title || !date) {
+            document.getElementById('event-title').focus();
+            return;
+        }
+
+        const newEvent = {
+            id: Date.now().toString(),
+            title, date, time, priority, desc
+        };
+        events.push(newEvent);
+        saveEvents(events);
+        syncCalendarEvents();
+        closeModal();
+    });
+
+    /* Search */
+    document.getElementById('search-input').addEventListener('input', function () {
+        const q = this.value.toLowerCase();
+        if (!q) { syncCalendarEvents(); return; }
+        const filtered = events.filter(e =>
+            e.title.toLowerCase().includes(q) || (e.desc || '').toLowerCase().includes(q)
+        );
+        calendar.removeAllEvents();
+        filtered.forEach(ev => {
+            calendar.addEvent({
+                id: ev.id,
+                title: ev.title,
+                start: ev.time ? `${ev.date}T${ev.time}` : ev.date,
+                allDay: !ev.time,
+                extendedProps: { priority: ev.priority }
+            });
+        });
+    });
+
+    /* Notification bell */
+    document.getElementById('notif-btn').addEventListener('click', () => {
+        const upcoming = events.filter(e => {
+            const d = new Date(e.date + 'T00:00:00');
+            return d >= today && d <= addDays(today, 2) && e.priority === 'high';
+        });
+        if (upcoming.length) {
+            alert(`🔔 ${upcoming.length} high-priority event(s) in the next 48 hours:\n` +
+                upcoming.map(e => `• ${e.title} — ${formatDate(e.date)}`).join('\n'));
+        } else {
+            alert('✅ No urgent events in the next 48 hours.');
+        }
+    });
+
+    /* Auto-render today's events on load */
+    renderRightPanel(fmt(today));
+
+})();
+</script>
+
+</body>
+</html>

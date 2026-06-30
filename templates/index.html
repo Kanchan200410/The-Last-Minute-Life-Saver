@@ -1,84 +1,222 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tasks</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Last Minute Life Saver</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
 
-<nav class="navbar">
-    <h2>🚀 Last Minute Life Saver</h2>
+<!-- ================= NAVBAR ================= -->
 
-    <div>
-        <a href="/">Dashboard</a>
-        <a href="/tasks">Tasks</a>
-        <a href="/add-task">Add Task</a>
+<nav class="navbar">
+
+    <div class="logo">
+        <span class="logo-icon">🚀</span>
+        <span class="logo-text">
+            <span class="logo-line1">Last Minute</span>
+            <span class="logo-line2">Life Saver</span>
+        </span>
     </div>
+
+    <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#about">About</a></li>
+    </ul>
+
+    <a href="/login" class="login-btn">
+        <i class="fab fa-google"></i>
+        Continue with Google
+    </a>
+
 </nav>
 
-<div class="container">
+<!-- ================= HERO ================= -->
 
-    <div class="header">
+<section class="hero" id="home">
 
-        <h1>📋 My Tasks</h1>
+    <div class="hero-text">
 
-        <a href="/add-task">
-            <button>Add Task</button>
-        </a>
+        <span class="eyebrow">AI Productivity Companion</span>
+
+        <h1>
+            Beat every deadline<br>with AI on your side.
+        </h1>
+
+        <p>
+            Organize your tasks, sync with Google Calendar,
+            and get AI-powered scheduling that tells you exactly
+            what to do next &mdash; and when.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="/login" class="primary-btn">
+                Get Started
+            </a>
+
+            <a href="#features" class="secondary-btn">
+                Learn More
+            </a>
+
+        </div>
 
     </div>
 
-    {% if tasks %}
+    <div class="hero-image">
 
-        {% for task in tasks %}
+        <div class="dashboard-preview">
 
-        <div class="task-card">
+            <div class="preview-header">
+                <span class="preview-title">Dashboard</span>
+                <span class="preview-date">Today</span>
+            </div>
 
-            <h3>{{ task.title }}</h3>
+            <div class="preview-stats">
 
-            <p>{{ task.description }}</p>
+                <div class="stat-card stat-purple">
+                    <span class="stat-label">THIS WEEK</span>
+                    <span class="stat-value">12</span>
+                    <span class="stat-sub">tasks scheduled</span>
+                </div>
 
-            <p>
-                Deadline:
-                {{ task.deadline }}
-            </p>
+                <div class="stat-card stat-orange">
+                    <span class="stat-label">PENDING</span>
+                    <span class="stat-value">3</span>
+                    <span class="stat-sub">need attention</span>
+                </div>
 
-            <p>
-                Status:
-                {{ task.status }}
-            </p>
+                <div class="stat-card stat-green">
+                    <span class="stat-label">COMPLETED</span>
+                    <span class="stat-value">9</span>
+                    <span class="stat-sub">this week</span>
+                </div>
 
-            <div>
+            </div>
 
-                <a href="/complete-task/{{ task.id }}">
-                    <button>
-                        Complete
-                    </button>
-                </a>
+            <div class="preview-card">
+                <i class="fas fa-fire"></i>
+                AI Priority Tasks
+            </div>
 
-                <a href="/delete-task/{{ task.id }}">
-                    <button>
-                        Delete
-                    </button>
-                </a>
+            <div class="preview-card">
+                <i class="fas fa-calendar-days"></i>
+                Google Calendar Sync
+            </div>
 
+            <div class="preview-card">
+                <i class="fas fa-robot"></i>
+                AI Daily Planner
             </div>
 
         </div>
 
-        {% endfor %}
+    </div>
 
-    {% else %}
+</section>
 
-        <div class="task-card">
-            <h3>No Tasks Found</h3>
+<!-- ================= FEATURES ================= -->
+
+<section class="features" id="features">
+
+    <span class="eyebrow center">Powerful Features</span>
+    <h2>Everything you need to stay ahead</h2>
+
+    <div class="feature-grid">
+
+        <div class="feature-card">
+            <div class="icon-badge icon-purple">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3>AI Priority</h3>
+            <p>Automatically ranks tasks based on urgency and workload.</p>
         </div>
 
-    {% endif %}
+        <div class="feature-card">
+            <div class="icon-badge icon-blue">
+                <i class="fas fa-calendar-days"></i>
+            </div>
+            <h3>Calendar Sync</h3>
+            <p>Every task is automatically added to Google Calendar.</p>
+        </div>
 
-</div>
+        <div class="feature-card">
+            <div class="icon-badge icon-green">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Progress Tracker</h3>
+            <p>Track estimated hours, worked hours and completion.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-badge icon-orange">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h3>AI Planner</h3>
+            <p>Generate an optimized daily schedule using Gemini AI.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+
+<section class="steps" id="about">
+
+    <span class="eyebrow center">How It Works</span>
+    <h2>From signup to sorted, in four steps</h2>
+
+    <div class="step-container">
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <h3>Login with Google</h3>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <h3>Add Your Tasks</h3>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <h3>AI Creates Plan</h3>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <h3>Stay Ahead</h3>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        <span class="logo-icon">🚀</span>
+        The Last Minute Life Saver
+    </div>
+
+    <p>
+        AI Productivity Companion powered by
+        Google Gemini, Google Calendar and Supabase.
+    </p>
+
+</footer>
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
 </body>
 </html>

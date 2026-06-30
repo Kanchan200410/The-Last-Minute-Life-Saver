@@ -1,66 +1,193 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add Task</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <title>Add Task – Last Minute Life Saver</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_task.css') }}">
 </head>
 <body>
 
-<nav class="navbar">
-    <h2>🚀 Last Minute Life Saver</h2>
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-icon">🚀</span>
+            <div class="brand-text">
+                <span class="brand-name">Last Minute</span>
+                <span class="brand-sub">Life Saver</span>
+            </div>
+        </div>
 
-    <div>
-        <a href="/">Dashboard</a>
-        <a href="/tasks">Tasks</a>
+        <nav class="sidebar-nav">
+            <p class="nav-section-label">WORKSPACE</p>
+            <a href="/" class="nav-item">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+            <a href="/tasks" class="nav-item">
+                <span class="nav-icon">✅</span> Tasks
+            </a>
+            <a href="/goals" class="nav-item">
+                <span class="nav-icon">🎯</span> Goals
+            </a>
+            <a href="/habits" class="nav-item">
+                <span class="nav-icon">🔥</span> Habits
+            </a>
+
+            <p class="nav-section-label">TOOLS</p>
+            <a href="/add-task" class="nav-item active">
+                <span class="nav-icon">＋</span> Add Task
+            </a>
+            <a href="/calendar" class="nav-item">
+                <span class="nav-icon">📅</span> Calendar
+            </a>
+            <a href="/ai-planner" class="nav-item">
+                <span class="nav-icon">⚡</span> AI Planner
+            </a>
+        </nav>
+
+        <a href="/assistant" class="sidebar-assistant">
+            <span>🤖</span> AI Assistant
+        </a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1 class="page-title">Add Task</h1>
+                <span class="page-date" id="pageDate"></span>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search tasks, events, goals…" class="search-input">
+                </div>
+                <button class="icon-btn" title="Notifications">🔔</button>
+                <button class="icon-btn" title="Settings">⚙️</button>
+                <div class="avatar">AJ</div>
+            </div>
+        </header>
+
+        <!-- Page Body -->
+        <main class="page-body">
+
+            <!-- AI Tip Banner -->
+            <div class="ai-banner">
+                <span class="ai-banner-icon">🤖</span>
+                <p><strong>AI Tip:</strong> Breaking tasks into smaller steps and setting a clear deadline increases completion rates by 3×. Fill in all fields for the best AI scheduling results.</p>
+            </div>
+
+            <div class="form-layout">
+
+                <!-- FORM CARD -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h2>🔥 New Task</h2>
+                        <p class="form-subtitle">Add details below — AI will auto-prioritize and schedule this for you.</p>
+                    </div>
+
+                    <form action="/add-task" method="POST" class="task-form">
+
+                        <div class="field-group">
+                            <label for="title" class="field-label">Task Title <span class="required">*</span></label>
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                class="field-input"
+                                placeholder="e.g. Complete DBMS Assignment"
+                                required>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="description" class="field-label">Description</label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                class="field-input field-textarea"
+                                rows="4"
+                                placeholder="What does this task involve? Add context for better AI recommendations…"></textarea>
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label for="deadline" class="field-label">Deadline</label>
+                                <input type="date" id="deadline" name="deadline" class="field-input">
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-actions">
+                            <a href="/tasks" class="btn-cancel">Cancel</a>
+                            <button type="submit" class="btn-submit">＋ Add Task</button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- RIGHT PANEL -->
+                <div class="side-panel">
+
+                    <div class="panel-card">
+                        <h3 class="panel-card-title">⚡ AI Scheduling</h3>
+                        <p class="panel-text">Once you add a task, the AI planner will:</p>
+                        <ul class="panel-list">
+                            <li>Analyze your peak focus windows</li>
+                            <li>Auto-assign a time slot on your calendar</li>
+                            <li>Set smart reminders before the deadline</li>
+                            <li>Re-schedule if conflicts arise</li>
+                        </ul>
+                    </div>
+
+                    <div class="panel-card">
+                        <h3 class="panel-card-title">📌 Priority Guide</h3>
+                        <div class="priority-item">
+                            <span class="priority-dot dot-high"></span>
+                            <div>
+                                <strong>High</strong>
+                                <p>Due within 24 hrs or critical impact</p>
+                            </div>
+                        </div>
+                        <div class="priority-item">
+                            <span class="priority-dot dot-medium"></span>
+                            <div>
+                                <strong>Medium</strong>
+                                <p>Due within 3 days, moderate impact</p>
+                            </div>
+                        </div>
+                        <div class="priority-item">
+                            <span class="priority-dot dot-low"></span>
+                            <div>
+                                <strong>Low</strong>
+                                <p>Flexible deadline or minor task</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card panel-tip">
+                        <h3 class="panel-card-title">💡 Quick Tip</h3>
+                        <p class="panel-text">Tasks with descriptions and estimated times get scheduled <strong>2× faster</strong> by the AI planner.</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
     </div>
-</nav>
 
-<div class="container">
-
-    <div class="task-card">
-
-        <h1>Add New Task</h1>
-
-        <form action="/add-task" method="POST">
-
-            <label>Task Title</label>
-            <br>
-
-            <input type="text"
-                   name="title"
-                   required>
-
-            <br><br>
-
-            <label>Description</label>
-            <br>
-
-            <textarea
-                name="description"
-                rows="5">
-            </textarea>
-
-            <br><br>
-
-            <label>Deadline</label>
-            <br>
-
-            <input type="date"
-                   name="deadline">
-
-            <br><br>
-
-            <button type="submit">
-                Add Task
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
+    <script>
+        const dateEl = document.getElementById('pageDate');
+        const now = new Date();
+        dateEl.textContent = now.toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    </script>
 
 </body>
 </html>

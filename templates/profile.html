@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="profile-card">
+
+        <h2>Profile Settings</h2>
+
+        <form action="/update-profile"
+              method="POST"
+              enctype="multipart/form-data">
+
+            <div class="profile-image">
+
+                <img
+                    id="preview"
+                    src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='images/default-avatar.png') }}"
+                    alt="Profile Picture"
+                >
+
+                <input
+                    type="file"
+                    id="profile_picture"
+                    name="profile_picture"
+                    accept="image/*"
+                    hidden
+                >
+
+                <button
+                    type="button"
+                    id="changePhoto">
+                    Change Photo
+                </button>
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Name</label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ user.name }}"
+                    required
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    value="{{ user.email }}"
+                    readonly
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Username</label>
+
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ user.username or '' }}"
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Phone</label>
+
+                <input
+                    type="text"
+                    name="phone"
+                    value="{{ user.phone or '' }}"
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Bio</label>
+
+                <textarea
+                    name="bio"
+                    rows="4">{{ user.bio or '' }}</textarea>
+
+            </div>
+
+            <button class="save-btn" type="submit">
+                Save Changes
+            </button>
+
+        </form>
+
+        <a href="/logout" class="logout-btn">
+            Logout
+        </a>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+
+</body>
+</html>

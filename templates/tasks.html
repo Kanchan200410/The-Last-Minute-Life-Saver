@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks | Last Minute Life Saver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <span class="sidebar-logo-icon">🚀</span>
+            <div class="sidebar-logo-text">
+                <span class="sidebar-logo-name">Last Minute</span>
+                <span class="sidebar-logo-sub">Life Saver</span>
+            </div>
+        </div>
+
+        <p class="sidebar-section-label">WORKSPACE</p>
+        <nav class="sidebar-nav">
+            <a href="/" class="sidebar-link">
+                <span class="sidebar-icon icon-indigo"><i class="fa-solid fa-chart-column"></i></span>
+                <span class="sidebar-label">Dashboard</span>
+            </a>
+            <a href="/tasks" class="sidebar-link active">
+                <span class="sidebar-icon icon-green"><i class="fa-solid fa-square-check"></i></span>
+                <span class="sidebar-label">Tasks</span>
+                <span class="sidebar-badge">{{ tasks|length }}</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-icon icon-red"><i class="fa-solid fa-bullseye"></i></span>
+                <span class="sidebar-label">Goals</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-icon icon-orange"><i class="fa-solid fa-fire"></i></span>
+                <span class="sidebar-label">Habits</span>
+            </a>
+        </nav>
+
+        <p class="sidebar-section-label">TOOLS</p>
+        <nav class="sidebar-nav">
+            <a href="/add-task" class="sidebar-link">
+                <span class="sidebar-icon icon-violet"><i class="fa-solid fa-plus"></i></span>
+                <span class="sidebar-label">Add Task</span>
+            </a>
+            <a href="/calendar" class="sidebar-link">
+                <span class="sidebar-icon icon-blue"><i class="fa-solid fa-calendar-days"></i></span>
+                <span class="sidebar-label">Calendar</span>
+            </a>
+            <a href="planner.html" class="sidebar-link">
+                <span class="sidebar-icon icon-yellow"><i class="fa-solid fa-bolt"></i></span>
+                <span class="sidebar-label">AI Planner</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-ai-pill">
+                <span class="sidebar-icon icon-indigo"><i class="fa-solid fa-robot"></i></span>
+                <span class="sidebar-label">AI Assistant</span>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="topbar-title">
+                <h1>Tasks</h1>
+                <p>Manage your productivity</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="topbar-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search tasks, goals...">
+                </div>
+                <button class="topbar-icon-btn"><i class="fa-solid fa-bell"></i></button>
+                <button class="topbar-icon-btn"><i class="fa-solid fa-gear"></i></button>
+                <div class="topbar-avatar">AJ</div>
+                <a href="/add-task" class="topbar-add-btn"><i class="fa-solid fa-plus"></i> Add Task</a>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <p class="stat-label">TOTAL TASKS</p>
+                <h2 class="stat-value">{{ tasks|length }}</h2>
+                <p class="stat-sub">All Tasks</p>
+                <div class="stat-bar stat-bar--blue"></div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">PENDING</p>
+                <h2 class="stat-value color-orange">{{ tasks|selectattr("status","equalto","Pending")|list|length }}</h2>
+                <p class="stat-sub">Need Attention</p>
+                <div class="stat-bar stat-bar--orange"></div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">COMPLETED</p>
+                <h2 class="stat-value color-green">{{ tasks|selectattr("status","equalto","Completed")|list|length }}</h2>
+                <p class="stat-sub">Finished</p>
+                <div class="stat-bar stat-bar--green"></div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">HIGH PRIORITY</p>
+                <h2 class="stat-value color-purple">{{ tasks|selectattr("priority","equalto","HIGH")|list|length }}</h2>
+                <p class="stat-sub">Critical Tasks</p>
+                <div class="stat-bar stat-bar--purple"></div>
+            </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Pending</button>
+            <button class="filter-btn">Completed</button>
+            <button class="filter-btn">High</button>
+            <button class="filter-btn">Medium</button>
+            <button class="filter-btn">Low</button>
+        </div>
+
+        <!-- Task Section -->
+        <div class="task-section">
+            <div class="task-section-header">
+                <h2><i class="fa-solid fa-list-check"></i> Your Tasks</h2>
+                <span class="task-count-pill">{{ tasks|length }} Tasks</span>
+            </div>
+
+            <div class="task-list">
+                {% if tasks %}
+                    {% for task in tasks %}
+                    <div class="task-card">
+                        <div class="task-card-top">
+                            <div>
+                                <h3 class="task-card-title">{{ task.title }}</h3>
+                                <div class="task-badges">
+                                    {% if task.priority == "HIGH" %}
+                                        <span class="badge badge--high">HIGH</span>
+                                    {% elif task.priority == "MEDIUM" %}
+                                        <span class="badge badge--medium">MEDIUM</span>
+                                    {% else %}
+                                        <span class="badge badge--low">LOW</span>
+                                    {% endif %}
+                                    {% if task.status == "Completed" %}
+                                        <span class="badge badge--completed">Completed</span>
+                                    {% else %}
+                                        <span class="badge badge--pending">Pending</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="task-card-menu"><i class="fa-solid fa-ellipsis"></i></div>
+                        </div>
+                        <p class="task-card-desc">{{ task.description }}</p>
+                        <div class="task-card-meta">
+                            <span><i class="fa-regular fa-calendar"></i> {{ task.deadline }}</span>
+                            <span><i class="fa-solid fa-layer-group"></i> {{ task.category if task.category else "General" }}</span>
+                        </div>
+                        <div class="task-card-footer">
+                            <form action="/delete-task/{{ task.id }}" method="POST">
+                                <button class="btn-delete"><i class="fa-solid fa-trash"></i> Delete</button>
+                            </form>
+                            <a href="/edit-task/{{ task.id }}" class="btn-edit"><i class="fa-solid fa-pen"></i> Edit</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Tasks">
+                    <h2>No Tasks Yet</h2>
+                    <p>Start by creating your first task.</p>
+                    <a href="/add-task" class="btn-create-task">+ Create Task</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel">
+
+        <div class="panel-card">
+            <h3 class="panel-card-title"><i class="fa-solid fa-robot" style="color:#6366f1;"></i> AI Priority</h3>
+            {% set high_tasks = tasks | selectattr("priority","equalto","HIGH") | list %}
+            {% if high_tasks %}
+                {% for task in high_tasks[:4] %}
+                <div class="panel-priority-item">
+                    <div>
+                        <strong>{{ task.title }}</strong>
+                        <p>Due: {{ task.deadline }}</p>
+                    </div>
+                    <span class="badge badge--high">HIGH</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="panel-empty">No high priority tasks.</p>
+            {% endif %}
+        </div>
+
+        <div class="panel-card">
+            <h3 class="panel-card-title"><i class="fa-solid fa-chart-line" style="color:#22c55e;"></i> Productivity</h3>
+            <div class="productivity-ring">
+                {% set completed = tasks | selectattr("status","equalto","Completed") | list | length %}
+                {% set total = tasks | length %}
+                {% if total > 0 %}{{ ((completed/total)*100)|round|int }}%{% else %}0%{% endif %}
+            </div>
+            <p class="productivity-sub">Completed <strong>{{ completed }}</strong> / {{ total }}</p>
+        </div>
+
+        <div class="panel-card">
+            <h3 class="panel-card-title"><i class="fa-solid fa-calendar-check" style="color:#3b82f6;"></i> Upcoming Deadlines</h3>
+            {% for task in tasks[:5] %}
+            <div class="panel-deadline-item">
+                <strong>{{ task.title }}</strong>
+                <small>{{ task.deadline }}</small>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="panel-card">
+            <h3 class="panel-card-title"><i class="fa-solid fa-bolt" style="color:#eab308;"></i> Quick Actions</h3>
+            <a href="/add-task" class="panel-action-link"><i class="fa-solid fa-plus" style="color:#8b5cf6;"></i> Add Task</a>
+            <a href="/calendar" class="panel-action-link"><i class="fa-solid fa-calendar-days" style="color:#3b82f6;"></i> Calendar</a>
+            <a href="/" class="panel-action-link"><i class="fa-solid fa-house" style="color:#f97316;"></i> Dashboard</a>
+        </div>
+
+        <div class="panel-ai-card">
+            <h3><i class="fa-solid fa-robot"></i> AI Assistant</h3>
+            <p>I found <strong>{{ high_tasks|length }}</strong> high-priority tasks that should be completed first.</p>
+            <button class="panel-ai-generate-btn">Generate Schedule</button>
+        </div>
+
+    </aside>
+
+</div>
+</body>
+</html>

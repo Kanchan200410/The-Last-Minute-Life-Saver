@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Planner</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/planner.css') }}">
+
+</head>
+
+<body>
+
+<div class="planner-container">
+
+    <!-- HEADER -->
+
+    <header class="planner-header">
+
+        <div>
+
+            <span class="ai-tag">
+
+                🤖 AI Productivity Planner
+
+            </span>
+
+            <h1>
+
+                Your Personalized Daily Plan
+
+            </h1>
+
+            <p>
+
+                Generated from your tasks,
+                priorities, deadlines and calendar.
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="/planner"
+               class="generate-btn">
+
+                ⚡ Generate Again
+
+            </a>
+
+        </div>
+
+    </header>
+
+    <!-- STATUS -->
+
+    <section class="status-card">
+
+        <div class="status-dot"></div>
+
+        <div>
+
+            <h3>
+
+                AI Analysis Completed
+
+            </h3>
+
+            <p>
+
+                Your schedule has been optimized
+                for today's workload.
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- PLAN -->
+
+    <section class="plan-card">
+
+        <div class="card-header">
+
+            <h2>
+
+                📅 Today's AI Plan
+
+            </h2>
+
+        </div>
+                <!-- ==========================
+                AI OUTPUT
+        =========================== -->
+
+        <div class="plan-output">
+
+            <div class="output-toolbar">
+
+                <div class="toolbar-left">
+
+                    <span class="live-badge">
+
+                        ● Live AI Response
+
+                    </span>
+
+                </div>
+
+                <div class="toolbar-right">
+
+                    <button class="tool-btn"
+                            id="copyBtn"
+                            type="button"
+                            onclick="copyPlan()">
+
+                        📋 Copy
+
+                    </button>
+
+                    <button class="tool-btn"
+                            id="downloadBtn"
+                            type="button"
+                            onclick="downloadPlanAsPdf()">
+
+                        📄 Download
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="ai-response">
+
+<pre id="aiPlanText">{{ ai_plan }}</pre>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ==========================
+            AI INFORMATION
+    =========================== -->
+
+    <section class="info-grid">
+
+        <div class="info-card">
+
+            <div class="info-icon">
+
+                🎯
+
+            </div>
+
+            <h3>
+
+                Personalized Planning
+
+            </h3>
+
+            <p>
+
+                AI generates your schedule
+                using your current tasks,
+                priorities and deadlines.
+
+            </p>
+
+        </div>
+
+        <div class="info-card">
+
+            <div class="info-icon">
+
+                📅
+
+            </div>
+
+            <h3>
+
+                Calendar Aware
+
+            </h3>
+
+            <p>
+
+                Free time is selected while
+                avoiding Google Calendar
+                conflicts automatically.
+
+            </p>
+
+        </div>
+
+        <div class="info-card">
+
+            <div class="info-icon">
+
+                ⚡
+
+            </div>
+
+            <h3>
+
+                Smart Prioritization
+
+            </h3>
+
+            <p>
+
+                High-priority tasks are
+                completed first while
+                balancing your workload.
+
+            </p>
+
+        </div>
+
+    </section>
+
+        <!-- ==========================
+            AI TIPS
+    =========================== -->
+
+    <section class="tips-section">
+
+        <div class="tips-card">
+
+            <div class="tips-header">
+
+                <h2>
+
+                    💡 AI Suggestions
+
+                </h2>
+
+            </div>
+
+            <ul class="tips-list">
+
+                <li>
+
+                    ✅ Complete high-priority tasks first.
+
+                </li>
+
+                <li>
+
+                    ☕ Take a 15-minute break after every 90 minutes.
+
+                </li>
+
+                <li>
+
+                    📵 Turn on Focus Mode while studying.
+
+                </li>
+
+                <li>
+
+                    📅 Review tomorrow's schedule before sleeping.
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================
+            ACTION BUTTONS
+    =========================== -->
+
+    <section class="action-section">
+
+        <a href="/planner"
+           class="action-btn primary-action">
+
+            🔄 Generate New Plan
+
+        </a>
+
+        <a href="/calendar"
+           class="action-btn">
+
+            📅 Open Calendar
+
+        </a>
+
+        <a href="/tasks"
+           class="action-btn">
+
+            ✅ View Tasks
+
+        </a>
+
+        <a href="/"
+           class="action-btn">
+
+            🏠 Back to Dashboard
+
+        </a>
+
+    </section>
+
+
+    <!-- ==========================
+            AI FOOTER
+    =========================== -->
+
+    <footer class="planner-footer">
+
+        <div class="footer-left">
+
+            <h3>
+
+                🤖 The Last Minute Life Saver
+
+            </h3>
+
+            <p>
+
+                AI-generated schedules based on your
+                tasks, deadlines, priorities,
+                and Google Calendar.
+
+            </p>
+
+        </div>
+
+        <div class="footer-right">
+
+            <span>
+
+                Powered by Google Gemini
+
+            </span>
+
+            <span>
+
+                •
+
+            </span>
+
+            <span>
+
+                Google Calendar
+
+            </span>
+
+        </div>
+
+    </footer>
+
+</div>
+
+<!-- jsPDF: used by the Download button to export the AI plan as a PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+
+    // Copy the plan text to the clipboard
+    function copyPlan() {
+        const text = document.getElementById('aiPlanText').innerText;
+        const btn = document.getElementById('copyBtn');
+
+        navigator.clipboard.writeText(text).then(function () {
+            const original = btn.innerHTML;
+            btn.innerHTML = '✅ Copied';
+            btn.classList.add('tool-btn-success');
+
+            setTimeout(function () {
+                btn.innerHTML = original;
+                btn.classList.remove('tool-btn-success');
+            }, 1800);
+        }).catch(function () {
+            alert('Could not copy to clipboard. Please copy the text manually.');
+        });
+    }
+
+    // Download the plan as a PDF file
+    function downloadPlanAsPdf() {
+        const text = document.getElementById('aiPlanText').innerText.trim();
+        const btn = document.getElementById('downloadBtn');
+
+        if (!text) {
+            alert('There is no plan to download yet.');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+        const marginX = 48;
+        const marginTop = 56;
+        const marginBottom = 56;
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const usableWidth = pageWidth - marginX * 2;
+
+        // Title
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text("Today's AI Plan", marginX, marginTop);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(120);
+        const dateStr = new Date().toLocaleDateString(undefined, {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+        doc.text(dateStr, marginX, marginTop + 18);
+
+        doc.setDrawColor(225);
+        doc.line(marginX, marginTop + 28, pageWidth - marginX, marginTop + 28);
+
+        // Body
+        doc.setFont('courier', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(40);
+
+        const lines = doc.splitTextToSize(text, usableWidth);
+        let cursorY = marginTop + 50;
+        const lineHeight = 15;
+
+        lines.forEach(function (line) {
+            if (cursorY > pageHeight - marginBottom) {
+                doc.addPage();
+                cursorY = marginTop;
+            }
+            doc.text(line, marginX, cursorY);
+            cursorY += lineHeight;
+        });
+
+        doc.save('ai-daily-plan.pdf');
+
+        const original = btn.innerHTML;
+        btn.innerHTML = '✅ Saved';
+        btn.classList.add('tool-btn-success');
+        setTimeout(function () {
+            btn.innerHTML = original;
+            btn.classList.remove('tool-btn-success');
+        }, 1800);
+    }
+
+</script>
+
+</body>
+
+</html>

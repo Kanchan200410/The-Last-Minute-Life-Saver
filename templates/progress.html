@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Progress Tracker | The Last Minute Life Saver</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/progress.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- ===========================
+        SIDEBAR
+============================ -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🚀
+        </div>
+
+        <div>
+            <h2>Life Saver</h2>
+            <span>AI Productivity</span>
+        </div>
+
+    </div>
+
+    <p class="menu-title">
+        MAIN MENU
+    </p>
+
+    <nav>
+
+        <a href="/">
+            <i class="fa-solid fa-table-columns"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/tasks">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Tasks</span>
+        </a>
+
+        <a href="/progress" class="active">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Progress</span>
+        </a>
+
+        <a href="/calendar">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Calendar</span>
+        </a>
+
+        <a href="/ai-planner">
+            <i class="fa-solid fa-robot"></i>
+            <span>AI Planner</span>
+        </a>
+
+    </nav>
+
+</aside>
+
+<!-- ===========================
+        MAIN
+============================ -->
+
+<div class="main">
+
+    <!-- TOP BAR -->
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>Smart Progress Tracker</h1>
+
+            <p>
+                Track your work, stay focused, and finish tasks before the deadline.
+            </p>
+
+        </div>
+
+        <div class="top-actions">
+
+            <div class="search">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    placeholder="Search task...">
+
+            </div>
+
+            <a href="/add-task" class="add-btn">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Add Task
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ===========================
+            TASK LIST
+    ============================ -->
+
+    <div class="task-container">
+
+        {% for task in tasks %}
+
+        <div class="task-card">
+
+            <div class="task-header">
+
+                <div>
+
+                    <h2>{{ task.title }}</h2>
+
+                    <p>
+
+                        {{ task.description }}
+
+                    </p>
+
+                </div>
+
+                <div>
+
+                    {% if task.priority == "HIGH" %}
+
+                        <span class="badge high">
+
+                            🔴 HIGH
+
+                        </span>
+
+                    {% elif task.priority == "MEDIUM" %}
+
+                        <span class="badge medium">
+
+                            🟡 MEDIUM
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge low">
+
+                            🟢 LOW
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- STATUS -->
+
+            <div class="status-row">
+
+                {% if task.status == "Completed" %}
+
+                    <span class="status completed">
+
+                        ✔ Completed
+
+                    </span>
+
+                {% elif task.status == "In Progress" %}
+
+                    <span class="status progress">
+
+                        🟡 In Progress
+
+                    </span>
+
+                {% elif task.status == "Incomplete" %}
+
+                    <span class="status incomplete">
+
+                        ❌ Incomplete
+
+                    </span>
+
+                {% else %}
+
+                    <span class="status pending">
+
+                        ⚪ Not Started
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <!-- PROGRESS -->
+
+            <div class="progress-section">
+
+                <div class="progress-label">
+
+                    <span>Progress</span>
+
+                    <span>{{ task.progress }}%</span>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill"
+
+                         style="width: {{ task.progress }}%;">
+
+                    </div>
+
+                </div>
+
+            </div>
+                        <!-- ===========================
+                    TASK DETAILS
+            ============================ -->
+
+            <div class="task-details">
+
+                <div class="detail-box">
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    <h4>Estimated</h4>
+
+                    <p>
+
+                        {{ task.estimated_minutes }} min
+
+                    </p>
+
+                </div>
+
+                <div class="detail-box">
+
+                    <i class="fa-solid fa-stopwatch"></i>
+
+                    <h4>Worked</h4>
+
+                    <p>
+
+                        {{ task.worked_minutes }} min
+
+                    </p>
+
+                </div>
+
+                <div class="detail-box">
+
+                    <i class="fa-solid fa-hourglass-half"></i>
+
+                    <h4>Remaining</h4>
+
+                    <p>
+
+                        {{ task.estimated_minutes - task.worked_minutes }} min
+
+                    </p>
+
+                </div>
+
+                <div class="detail-box">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                    <h4>Deadline</h4>
+
+                    <p>
+
+                        {{ task.deadline }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- ===========================
+                    LIVE TIMER
+            ============================ -->
+
+            <div class="timer-box">
+
+                <h3>
+
+                    <i class="fa-solid fa-stopwatch"></i>
+
+                    Focus Timer
+
+                </h3>
+
+                <h1 id="timer-{{ task.id }}">
+
+                    00:00:00
+
+                </h1>
+
+            </div>
+
+            <!-- ===========================
+                    ACTION BUTTONS
+            ============================ -->
+
+            <div class="task-actions">
+
+                <button
+                    class="start-btn"
+                    data-id="{{ task.id }}">
+
+                    <i class="fa-solid fa-play"></i>
+
+                    Start
+
+                </button>
+
+                <button
+                    class="pause-btn"
+                    data-id="{{ task.id }}">
+
+                    <i class="fa-solid fa-pause"></i>
+
+                    Pause
+
+                </button>
+
+                <button
+                    class="finish-btn"
+                    data-id="{{ task.id }}">
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Finish Task
+
+                </button>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <!-- ===========================
+                EMPTY STATE
+        ============================ -->
+
+        <div class="empty-state">
+
+            <i class="fa-solid fa-list-check empty-icon"></i>
+
+            <h2>
+
+                No Tasks Available
+
+            </h2>
+
+            <p>
+
+                Create your first task and start tracking your progress.
+
+            </p>
+
+            <a
+                href="/add-task"
+                class="create-task-btn">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Create Task
+
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/progress.js') }}"></script>
+
+</body>
+
+</html>

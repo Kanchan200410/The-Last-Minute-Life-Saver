@@ -1,85 +1,324 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Last Minute Life Saver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
 
-<nav class="navbar">
-    <h2>🚀 Last Minute Life Saver</h2>
+<!-- LAYOUT WRAPPER -->
+<div class="app-layout">
 
-    <div>
-        <a href="/">Dashboard</a>
-        <a href="/tasks">Tasks</a>
-        <a href="/add-task">Add Task</a>
-    </div>
-</nav>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-<div class="container">
-
-    <h1>Welcome Back 👋</h1>
-
-    <div class="stats">
-
-        <div class="card">
-            <h3>Total Tasks</h3>
-            <h1>{{ total_tasks }}</h1>
+        <div class="sidebar-logo">
+            <span class="logo-icon">🚀</span>
+            <span class="logo-text">Last Minute<br><small>Life Saver</small></span>
         </div>
 
-        <div class="card">
-            <h3>Completed</h3>
-            <h1>{{ completed }}</h1>
+        <div class="sidebar-section-label">WORKSPACE</div>
+        <nav class="sidebar-nav">
+            <a href="/" class="nav-item active">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+            <a href="{{ url_for('tasks') }}" class="nav-item">
+                <span class="nav-icon">✅</span> Tasks
+                <span class="nav-badge">{{ pending }}</span>
+            </a>
+            <a href="#">
+                <span class="nav-item">
+                    <span class="nav-icon">🎯</span> Goals
+                </span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🔥</span> Habits
+            </a>
+        </nav>
+
+        <div class="sidebar-section-label">TOOLS</div>
+        <nav class="sidebar-nav">
+            <a href="/add-task" class="nav-item">
+                <span class="nav-icon">➕</span> Add Task
+            </a>
+            <a href="{{ url_for('calendar') }}" class="nav-item">
+                <span class="nav-icon">📆</span> Calendar
+            </a>
+
+            <a href="{{ url_for('progress') }}" class="nav-item">
+                <span class="nav-icon"></span> Progress
+            </a>
+
+            <a href="/generate-plan" class="nav-item">
+                <span class="nav-icon">⚡</span> AI Planner
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="#" class="nav-item ai-assistant-link">
+                <span class="nav-icon">🤖</span> AI Assistant
+            </a>
         </div>
 
-        <div class="card">
-            <h3>Pending</h3>
-            <h1>{{ pending }}</h1>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1 class="page-title">Dashboard</h1>
+                <span class="page-date">
+                    {{ "Friday, June 26, 2026" }}
+                </span>
+            </div>
+            <div class="topbar-right">
+                <div class="search-bar">
+                    <span>🔍</span>
+                    <input type="text" placeholder="Search tasks, events, goals...">
+                </div>
+                <button class="icon-btn">🔔</button>
+                <button class="icon-btn">⚙️</button>
+                <a href="/profile" class="avatar-link">
+    <div class="avatar">
+        {{ session['user']['name'][:2]|upper }}
+    </div>
+</a>
+            </div>
+        </header>
+
+        <!-- SCROLLABLE BODY -->
+        <div class="content-body">
+
+            <!-- HERO STAT CARDS -->
+            <div class="stats-row">
+
+                <div class="stat-card">
+                    <div class="stat-label">THIS WEEK</div>
+                    <div class="stat-number">{{ total_tasks }}</div>
+                    <div class="stat-sub">tasks scheduled</div>
+                </div>
+
+                <div class="stat-card stat-card--warn">
+                    <div class="stat-label">PENDING</div>
+                    <div class="stat-number warn">{{ pending }}</div>
+                    <div class="stat-sub">need attention</div>
+                </div>
+
+                <div class="stat-card stat-card--good">
+                    <div class="stat-label">COMPLETED</div>
+                    <div class="stat-number good">{{ completed }}</div>
+                    <div class="stat-sub">this week</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">PRODUCTIVITY</div>
+                    <div class="stat-number primary">{{ productivity_score }}%</div>
+                    <div class="stat-sub">score today</div>
+                </div>
+
+            </div>
+
+            <!-- RECOMMENDATION BANNER -->
+            <div class="recommendation-banner">
+                <span class="rec-icon">🤖</span>
+                <div class="rec-content">
+                    <strong>AI Insight:</strong>
+                    You usually complete difficult tasks between 7 PM and 10 PM.
+                    Schedule your DBMS Project during this window for best results.
+                </div>
+                <button class="rec-btn">Generate Plan</button>
+            </div>
+
+            <!-- MAIN GRID -->
+            <div class="content-grid">
+
+                <!-- LEFT COLUMN -->
+                <div class="col-main">
+
+                    <!-- PRIORITY TASKS -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>🔥 AI Priority Tasks</h2>
+                            <a href="{{ url_for('tasks') }}" class="card-link">View all →</a>
+                        </div>
+                        <ul class="task-list">
+                            {% for task in tasks %}
+                                {% if task.status == "Pending" and task.priority %}
+                                <li class="task-item">
+                                    <span class="task-dot
+                                        {% if task.priority == 'HIGH' %}dot-high
+                                        {% elif task.priority == 'MEDIUM' %}dot-med
+                                        {% else %}dot-low{% endif %}">
+                                    </span>
+                                    <span class="task-title">{{ task.title }}</span>
+                                    {% if task.priority == "HIGH" %}
+                                        <span class="badge badge-high">HIGH</span>
+                                    {% elif task.priority == "MEDIUM" %}
+                                        <span class="badge badge-medium">MEDIUM</span>
+                                    {% else %}
+                                        <span class="badge badge-low">LOW</span>
+                                    {% endif %}
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- AI SCHEDULE -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>📅 AI Schedule</h2>
+                            <a href="{{ url_for('calendar') }}" class="card-link">Open Calendar →</a>
+                        </div>
+                        <ul class="schedule-list">
+                            <li class="schedule-item">
+                                <span class="time-chip">9:00 AM</span>
+                                <div class="schedule-info">
+                                    <strong>DBMS Project</strong>
+                                    <span>2 hrs · High priority</span>
+                                </div>
+                            </li>
+                            <li class="schedule-item">
+                                <span class="time-chip">11:00 AM</span>
+                                <div class="schedule-info">
+                                    <strong>NPTEL Notes</strong>
+                                    <span>1.5 hrs · Medium priority</span>
+                                </div>
+                            </li>
+                            <li class="schedule-item">
+                                <span class="time-chip">7:00 PM</span>
+                                <div class="schedule-info">
+                                    <strong>DSA Practice</strong>
+                                    <span>1 hr · Peak focus window</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+<!-- GOALS + HABITS ROW -->
+<div class="inner-grid">
+
+    <!-- TASK PROGRESS CARD -->
+    <div class="card">
+        <div class="card-header">
+            <h2>🎯 Task Progress</h2>
         </div>
+        <ul class="progress-list">
+            {% for task in tasks[:3] %}
+            <li>
+                <div class="progress-label">
+                    <span>{{ task.title }}</span>
+                    <span>{{ task.progress }}%</span>
+                </div>
+                <div class="progress-bar">
+                    {% if task.progress < 40 %}
+                        <div class="progress-fill low" style="width: {{ task.progress }}%;"></div>
+                    {% elif task.progress < 80 %}
+                        <div class="progress-fill medium" style="width: {{ task.progress }}%;"></div>
+                    {% else %}
+                        <div class="progress-fill high" style="width: {{ task.progress }}%;"></div>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 
-        <div class="card">
-            <h3>Productivity</h3>
-            <h1>{{ productivity_score }}%</h1>
+    <!-- HABIT TRACKER CARD -->
+    <div class="card">
+        <div class="card-header">
+            <h2>🔥 Habit Tracker</h2>
         </div>
-
-    </div>
-
-    <div class="recommendation">
-        <h2>🤖 AI Recommendation</h2>
-
-        <p>
-            Focus on your nearest deadline first.
-        </p>
-    </div>
-
-    <div class="quick-links">
-
-        <a href="/tasks">
-            <button>View Tasks</button>
-        </a>
-
-        <a href="/add-task">
-            <button>Add New Task</button>
-        </a>
-
-    </div>
-
-    <div class="rescue-box">
-
-        <h2>🚨 Rescue Mode</h2>
-
-        <p>
-            Falling behind? Let AI create a recovery plan.
-        </p>
-
-        <button>
-            Rescue Me
-        </button>
-
+        <ul class="habit-list">
+            <li>
+                <span class="habit-name">Study Streak</span>
+                <span class="habit-streak">12 Days 🔥</span>
+            </li>
+            <li>
+                <span class="habit-name">Exercise</span>
+                <span class="habit-streak">5 Days 💪</span>
+            </li>
+            <li>
+                <span class="habit-name">Reading</span>
+                <span class="habit-streak">7 Days 📖</span>
+            </li>
+        </ul>
     </div>
 
 </div>
+<!-- end inner-grid -->
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="col-side">
+
+                    <!-- CALENDAR INTEGRATION -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>📆 Calendar</h2>
+                            <span class="event-count-badge">{{ calendar_events|length }} events</span>
+                        </div>
+                        <div class="calendar-scroll">
+                            {% for event in calendar_events %}
+                            <div class="event-item">
+                                <h4>{{ event.get('summary', 'No Title') }}</h4>
+                                <p>
+                                    {% if event.get('start', {}).get('dateTime') %}
+                                        {{ event.get('start', {}).get('dateTime') }}
+                                    {% elif event.get('start', {}).get('date') %}
+                                        {{ event.get('start', {}).get('date') }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- REMINDERS -->
+                    <div class="card card--warn-border">
+                        <div class="card-header">
+                            <h2>⚠️ Reminders</h2>
+                        </div>
+                        <ul class="reminder-list">
+                            <li>DBMS Project due tomorrow</li>
+                            <li>You have completed only 20%</li>
+                            <li>Start before 7 PM today</li>
+                        </ul>
+                    </div>
+
+                    <!-- VOICE ASSISTANT -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>🎤 Voice Assistant</h2>
+                        </div>
+                        <p class="voice-hint">
+                            Try: <em>"Add DBMS Project due Friday"</em>
+                        </p>
+                        <button class="voice-btn full-width-btn">🎙 Start Listening</button>
+                    </div>
+
+                    <!-- RESCUE MODE -->
+                    <div class="card card--rescue">
+                        <h2>🚨 Deadline Rescue</h2>
+                        <p>Falling behind? Let AI generate a recovery plan instantly.</p>
+                        <button class="rescue-btn full-width-btn">RESCUE ME</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- end content-body -->
+
+    </main>
+
+</div>
+<!-- end app-layout -->
 
 </body>
 </html>
