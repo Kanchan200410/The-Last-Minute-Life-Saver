@@ -57,7 +57,7 @@
         </nav>
 
         <div class="sidebar-bottom">
-            <a href="#" class="nav-item ai-assistant-link">
+            <a href="{{ url_for('generate_plan') }}" class="nav-item ai-assistant-link">
                 <span class="nav-icon">🤖</span> AI Assistant
             </a>
         </div>
@@ -130,7 +130,7 @@
                     You usually complete difficult tasks between 7 PM and 10 PM.
                     Schedule your DBMS Project during this window for best results.
                 </div>
-                <button class="rec-btn">Generate Plan</button>
+               <a href="{{ url_for('generate_plan') }}" ><button class="rec-btn">Generate Plan</button></a>
             </div>
 
             <!-- MAIN GRID -->
